@@ -7,9 +7,9 @@
 #######################################################
 
 
-x = 1:10
-y = LETTERS[1:10]
-LoL = list(x,y)
+x <-  1:10
+y <-  LETTERS[1:10]
+LoL <-  list(x,y)
 is.vector(LoL[1])
 is.vector(LoL[[1]])
 is.list(LoL[[1]])
@@ -17,13 +17,13 @@ LoL[1][1]
 LoL[[1]][1]
 LoL[1,2]
 is.data.frame(df)
-df = data.frame(x,y)
+df <- data.frame(x,y)
 df[1]
 df[[1]]
 df[1,2]
-alphaCube = array(LETTERS, (3,3,3)) #Find the error in this line
+alphaCube <-  array(LETTERS, (3,3,3)) #Find the error in this line
 ###Write a line here that returns the letter "Q" from alphaCube
-random = runif(20, 5, 15)
+random <-  runif(20, 5, 15)
 summary(random)
 summary(letters[5:15])
 
