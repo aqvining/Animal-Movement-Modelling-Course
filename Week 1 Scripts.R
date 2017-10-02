@@ -42,3 +42,8 @@ summary(letters[5:15])
 
 ###Problem 3:
 ##Using only the variable 'alphaCube' and the 'paste()' function, create a string containing the name of your favorite color
+
+###Problem 4:
+##Write a function called 'discrption' that, for any variable entered, will tell you the type of data structure and the class
+##of data that it contains. Check your function with objects P4test1-P4test8 and compare your results to the function summary()
+
