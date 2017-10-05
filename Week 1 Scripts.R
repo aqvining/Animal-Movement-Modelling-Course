@@ -16,12 +16,12 @@ is.list(LoL[[1]])
 LoL[1][1]
 LoL[[1]][1]
 LoL[1,2]
-is.data.frame(df)
 df <- data.frame(x,y)
+is.data.frame(df)
 df[1]
 df[[1]]
 df[1,2]
-alphaCube <-  array(LETTERS, (3,3,3)) #Find the error in this line
+alphaCube <-  array(LETTERS, c(3,3,3)) #Find the error in this line
 ###Write a line here that returns the letter "Q" from alphaCube
 random <-  runif(20, 5, 15)
 summary(random)
