@@ -2,7 +2,7 @@ rm(list <-  ls())
 coordinates <-  data.frame(x = runif(4, 0, 10), y = runif(4, 0, 10))
 v1 <-  c(1, 6, 3, 22)
 v2 <-  c("A", "F", "B", "V")
-v3 <-  c(1, 0, 1, 1)
+v3 <-  c(1, 1, 0, 1)
 alphaCube <-  array(LETTERS, c(3,3,3))
 
 ##Problem 4 test variables
