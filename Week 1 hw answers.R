@@ -3,7 +3,7 @@
 ###10-9-17
 
 ###Problem 1
-coordList = list(coordinates[1,], coordinates[2,], coordinates[3,], coordinates[4,]) #Makes a list where each element is a row vector from coordinates
+coordList = list(unlist(coordinates[1,]), coordinates[2,], coordinates[3,], coordinates[4,]) #Makes a list where each element is a row vector from coordinates
 coordList[[2]] #check
 
 ###Problem 2
