@@ -31,8 +31,8 @@ Test_2.6 = c(-220, -200, -150) #expected output: c(220, 200, 150)
 Test_2.7 = letters[1:5]   #expected output: same as input, with a message indicating invalid input
 
 
-####Problem 1: Write a function, removePositive, that will take a vector or list as input and 
-####           replaces all postitive values with 0's
+####Problem 1: Write a function, removeNegative, that will take a vector or list as input and 
+####           replaces all negative values with 0's
 ####Note: When dealing with strings, you might find NAs are introduced by coercion. For now, it is okay
 ####      if your function produces this warning, so long as it is still able to produce the right answer
 ####Hint: the which() function may be helpful
