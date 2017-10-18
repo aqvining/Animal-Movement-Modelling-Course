@@ -11,6 +11,6 @@
 ####should be drawn from a normal distribution with mean and sd as input by user. Your function should return a
 ####dataframe will locations for each step. The functions runif() (draws from uniform distribution), 
 ####sin(), and cos() will be useful. I've started your function set-up below.
-randomMove <- function(start = data.frame(x = 0, y = 0), steps = 10) {
+randomMove <- function(start = data.frame(x = 0, y = 0), steps = 10, mean = 1, sd = 0.25) {
   
 }
