@@ -38,7 +38,6 @@ moveDistanceWhile <- function(location, averageDist, sd, endDist) {
   #input: location is a dataframe w. x and y columns (numeric vectors). averageDist and sd are single numeric values.
   ##      endDist is a single numeric value giving the distance from the start location the agent must move
   #output: a dataframe w/ all locations reached
-  distFromStart <- 0
   while (distFromStart < endDist) {
     newLocation <- move(location[nrow(location),1], location[nrow(location),2], averageDist, sd)
     distFromStart <- sqrt(sum((location[1,] - newLocation)^2)) #pythogorean theorum
@@ -61,6 +60,7 @@ plot(table(lengths))
 
 i = 1
 while(i <= times) {
+  i = i+1
   simulations[[i]] <- moveDistanceRecursive(data.frame(x=0, y =0), 1, 0.2, 3)
   lengths[i] <- nrow(simulations[[i]])
 }

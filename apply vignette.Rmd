@@ -1,0 +1,97 @@
+---
+title: "Apply Functions"
+author: "Alexander Vining"
+date: "November 7, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The goal of this vignette is to teach you how to use the apply function and its variants. Apply essentially acts like a for loop, applying some process or function iteratively over a set of values. It is often cited as being faster than for loops in R, though this isn't always the case. The apply function can also be more concise and easier to interpret than a for loop. Finally, regardless of the benefits, R users often use the apply function, so it is important to know how it works. I'd like you start by reading this page on functionals (apply is an example of a functional) down to (but not including) the section on paralellism. You probably won't understand everything, but it will give you a primer to what the apply function actually is; then you can come back here and go through some examples to help you understand better.
+
+http://adv-r.had.co.nz/Functionals.html
+
+Now that you've read about what the apply function is and why we use it, let's practice. The basic apply function iterates over a matrix or data frame. These iterations can be done by row, column, or both.
+
+```{r Basics}
+example1 <- matrix(1,nrow = 4, ncol = 4)
+example1
+example1 <- apply(X = example1, MARGIN = c(1,2), FUN = runif) #There are three main arguments to apply. X is the data to be used, MARGIN indicates whether to iterate over rows (1), columns (2), or both (c(1,2)). FUN is the function that should be applied to each value. By default, the current iteration of X is passed to the first argument of FUN. Here that means for each iteration, a 1 is passed to the n argument of runif (a single value is drawn).
+example1
+```
+
+Now lets use apply to take the mean of each column or each row:
+```{r}
+apply(X = example1, MARGIN = 2, FUN = mean) #column means
+apply(example1, 1, mean) #row means
+```
+We can also use apply to pass values to arguments other than the first one in a function
+```{r}
+example2 <- matrix(rep(1:4, each = 100), nrow = 100, ncol = 4)
+head(example2)
+example2 <- apply(X = example2, MARGIN = c(1,2), FUN = function(x) rnorm(1, x)) #Here, we define a function separately that takes our iterated value as the variable x and passes it to the second argument of rnorm (the mean of the distribution)
+head(example2)
+```
+
+Because the first column in our matrix was 1s, the second 2s, etc. and these are the numbers passed to the 'mean' argument of rnorm, when we take the mean of each column it should be close to the number the column was filled with!
+```{r}
+apply(X = example2, MARGIN = 2, FUN = mean)
+```
+
+We can use this same method to apply functions that are entirely our own to a matrix
+```{r}
+arbitraryOperations <- function(a, b) { #don't worry about understanding what this function does. The point is to illustrate the we can do whatever we want!
+  if (a == 0) return(0)
+  out <- (b*a) + (b/a)
+  while (out < 1) {
+    a <- a - 0.1
+    out <- out * a
+  }
+  out
+}
+example3 <- data.frame("A" = runif(10, -10, -1), "B" = runif(10, -1, 1), "C" = runif(10, 1, 10))
+example3
+apply(X = example3, MARGIN = c(1,2), FUN = arbitraryOperations, b = 0.2) #our arbitraryOperations function requires two arguments. The first 'a', is passed to our function by apply and comes from X (example3). The second we tell apply what it is directly by including the argument name and its value our call to apply.
+```
+
+Of course, sometimes we want to apply loops to a data structure other than a matrix. For this we can use lapply (the l stands for list).
+```{r}
+coords1 <- vector(mode = "list", length = 10) #create empty list
+coords1 <- lapply(X = coords1, FUN = function(x) rnorm(n = 2, mean = 0, sd = 5)) #notice our function doesn't even use its input! We could enter any list and the values in it wouldn't matter. Do you see why?
+move <- function(coords, dist, angle) {  #a simple move function
+  coords[1] <- coords[1] + dist * cos(angle)
+  coords[2] <- coords[2] + dist * sin(angle)
+  coords
+}
+coords2 <- lapply(X = coords1, FUN = move, dist = rnorm(n=1, mean = 1, sd = 0.2), angle = runif(1,0,2*pi))
+```
+
+We can use sapply to coerce our output into the simplest possible structure (usually a vector). sapply works just like lapply, but it will turn the output into a vector if possible. Lets use this to make vectors of x and y coordinates we can use to plot our points.
+```{r}
+x1 <- sapply(coords1, FUN = function(x) x[1]) #puts all the x coordinates in one vector
+y1 <- sapply(coords1, FUN = function(x) x[2]) #puts all the y coordinates in one vector
+x1
+y1
+plot(x1,y1)
+x2 <- sapply(coords2, FUN = function(x) x[1])
+y2 <- sapply(coords2, FUN = function(x) x[2])
+plot(c(x1,x2), c(y1,y2), col = rainbow(length(x1)))
+```
+
+This mostly works great, but all of our agents are moving the same distance and angle! We can use mapply to have a function iterate over different values for multiple arguments (the m stands for multiple)
+```{r}
+coords3 <- mapply(FUN = move, coords1, dist = rnorm(n = length(coords1), mean = 1, sd = 0.2), angle = runif(length(coords1), 0, 2*pi), SIMPLIFY = FALSE) #Notice the addition of the SIMPLIFY argument; mapply, like sapply, will try to simplify the data ourput unless we tell it not to. Also note the argument for our data is no longer X. In fact there is no argument name for our data, any unnamed arguments are just assumed to be the data. As a challenge, think back to the reading you did at the start this exercise and see if you can figure out why.
+x3 <- sapply(coords3, function(x) x[1])
+y3 <- sapply(coords3, function(x) x[2])
+plot(c(x1,x3), c(y1,y3), col = rainbow(length(x1)))
+```
+
+Finally, let's say we want to use mapply, but there are some arguments we DON'T want to iterate. For this, we can use the MoreArgs argument. For example, lets say we want to keep the distance travelled the same and only get a random angle for each iteration
+```{r}
+coords4 <- mapply(FUN = move, coords1, angle = runif(length(coords1),0,2*pi), MoreArgs = list(dist = 1), SIMPLIFY = FALSE) #The argument MoreArgs takes a list where the name of each element is an argument of FUN and the value of each element is the value to be passed to that argument.
+x4 <- sapply(coords4, function(x) x[1])
+y4 <- sapply(coords4, function(x) x[2])
+plot(c(x1,x4), c(y1,y4), col = rainbow(length(x1)))
+```

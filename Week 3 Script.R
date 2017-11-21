@@ -3,7 +3,7 @@
 move <- function(location, steps) {
   #input: location is a data frame with an "x" and "y" column with 1 row of values
   ##``````steps is the number of moves the agent should make
-  #output: a data frame with 10 new x,y coordinates
+  #output: a data frame with new x,y coordinates, rows = steps + 1
   #description: in each step, the agent can move 1 unit in any cardinal direction, or remain still.
   if (!identical(names(location), c("x","y"))) print("location should be a data frame with two columns named 'x' and 'y'")
   newX <- location$x + sample(-1:1, size = 1) #sample takes a random draw from a vector of numbers

@@ -7,9 +7,8 @@ loopAdd <- function(toAdd) {
   if (!is.numeric(toAdd)) {  #input check
     print("input must be numeric")
   } else {
-    for(i in 1:length(toAdd)-1) {
+    for(i in seq(length(toAdd)-1)) {
       toAdd[i] <- toAdd[i] + toAdd[i+1]
-      print(i)
     }
     return(toAdd)
   }
@@ -21,6 +20,28 @@ loopAdd <- function(toAdd) {
 #The function should return a vector of Booleans indicating whether it is safe or not for each rabbit to go outside (it's not safe if there is
 #a fox within 2 units of the rabbit).
 #Hint: Try writing a separate function to calculate the distance between two points.
+
+toForage <- function(rabbits, foxes) {
+  #input: two lists of coordinate pairs
+  #output: A vector of booleans
+  #function: determines if any of the coordinate pairs in the second list are within two units
+  #          of each of the coordinate pairs in the first list
+  forage = rep(TRUE, times = length(rabbits)) #set a default of TRUE(rabbit should forage)
+  for (i in 1:length(rabbits)) {
+    for (j in 1:length(foxes)) {
+      if (getDist(rabbits[[i]], foxes[[j]]) <= 2) forage[[i]] <- FALSE #changes to False if any foxes are nearby
+    }
+  }
+  return(forage)
+}
+
+getDist <- function(position1, position2) {
+  #input:two coordinate pairs (vectors)
+  #output: distance between coordinate pairs (numeric)
+  deltaX <- position1[1] - position2[1] #difference between x coordinates
+  deltaY <- position1[2] - position2[2] #diff between y coordinates
+  return(sqrt(deltaX**2 + deltaY**2)) #pythagorean theorum
+}
 
 #Test Set 1, output = c(F,F,T,T)
 rabbits1 = list('A' = c(0,0), 'B' = c(1,3), 'C' = c(-3, 2), 'D' = c(-2,2))
@@ -45,18 +66,26 @@ rabbitForage <- function(rabbit, foxes, speed = 1, full = 10, probabilityFood = 
   rabbit = list(rabbit)
   food <- 0
   while(food < full) { #run until rabbit is full
-    while(foxNearby(rabbit, foxes)) { #foxNearby is another function, below, you will need to fill in
+    while(foxNearby(rabbit[[length(rabbit)]], foxes)) { #foxNearby is another function, below, you will need to fill in
       foxes <- move(foxes, speed) #move is another function, below, you will need to fill in. When a fox is nearby, only foxes move
     }
-    #when a fox isn't nearby three things need to happen. What are they? Write code to do those things
+    foxes <- move(foxes, speed) #when a fox isn't nearby three things need to happen. What are they? Write code to do those things
+    rabbit <- c(rabbit, move(rabbit[length(rabbit)], speed))
+    if (runif(1,0,1) <= probabilityFood) food <- food + 1
   }
   return(rabbit)
 }
 
 move <- function(locations, distance) { #fill this in! I would recomend a for loop, and remember the trigonometry we used to move agents before!
   #input: a list of x,y coordinate pairs - eg: list(c(0,1), c(2,3), c(-1,-2))
-   #distance: a single numeric
+  #distance: a single numeric
   #output: a list of same length as input in which each coordinate pair has moved the value given in distance
+  for(i in 1:length(locations)) {
+    theta <- runif(1,0, 2*pi)
+    locations[[i]][1] <- locations[[i]][1] + distance * cos(theta)
+    locations[[i]][2] <- locations[[i]][2] + distance * sin(theta)
+  }
+  return(locations)
 }
 
 foxNearby <- function(rabbit, foxes) {# this function should check if any foxes are within 2 units of the rabbit. Again, use a for loop and trigonometry.
@@ -64,7 +93,10 @@ foxNearby <- function(rabbit, foxes) {# this function should check if any foxes 
   #input: rabbit: a vector/df row with 2 numeric values
   ##foxes: a list of coordinate pairs
   #output: Boolean, TRUE if a fox is within 2 units of rabbit.
-  
+  for (i in 1:length(foxes)) {
+    if (getDist(rabbit, foxes[[i]]) <= 2) return(TRUE)
+  }
+  return(FALSE)
 }
 
 ###Problem 4
